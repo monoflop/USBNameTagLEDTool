@@ -1,0 +1,49 @@
+--- Package overview ---
+All assumptions are based on the sniffed communication between the software 'HDSmart'
+and the device. Only the host->device communication was observed.
+
+Every package has a size of 64 bytes. Every command contains at least 8 packages.
+
+Sample package
+   1        2        3                                                                                         4                                                                         5   6
+|....|..............|..|..............................................................................................................................................................|.....|.|
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+// 1: 0x48 0x44 = 'HD' Magic number
+// 2: Command ?
+// 3: Package number ?
+// 4: Data
+// 5: Checksum SUM(Package bytes(0..60))
+// 6: End of package
+
+Image: Data 72 bytes each bit represents a display pixel. Furthermore a set bit equals an lit LED.
+Always 12 consecutive bytes represent one column.
+
+1 1 1 1 1 1 1 1 | Byte 1   0xff
+1 0 0 0 0 0 0 1 | Byte 2   0x81
+1 0 1 1 1 1 0 1 | Byte 3   0xbd
+1 0 1 1 1 1 0 1 | Byte 4   0xbd
+1 0 1 1 1 1 0 1 | Byte 5   0xbd
+1 0 1 1 1 1 0 1 | Byte 6   0xbd
+1 0 1 1 1 1 0 1 | Byte 7   0xbd
+1 0 1 1 1 1 0 1 | Byte 8   0xbd
+1 0 1 1 1 1 0 1 | Byte 9   0xbd
+1 0 1 1 1 1 0 1 | Byte 10  0xbd
+1 0 0 0 0 0 0 1 | Byte 11  0x81
+1 1 1 1 1 1 1 1 | Byte 12  0xff
+
+Display 'test' (all default settings)
+- Image data found in package 4 byte index 40 -> 60 and package 5 byte index 9 -> 59
+- Animation type (Package 3, Byte 59) (Range 0..11)
+- Animation speed (Package 3, Byte 60) (Range 1..9)
+- Display time (Package 4, Byte 9) (Range 1..255)
+- Blinking (Package 4, Byte 10) (Range 0..1)
+- Outline (Package 4, Byte 11) (Range 0..14)
+- Outline Speed (Package 4, Byte 12) (Range 1..9)
+1) 48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+2) 48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+3) 48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+4) 48 44 01 69 00 07 00 03 00 03 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 bc ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 43 aa
+5) 48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+6) 48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+7) 48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+8) 48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa

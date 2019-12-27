@@ -1,0 +1,107 @@
+// Package design
+// 0x48 0x44 = HD Magic number
+// 0xaa = Package end
+
+// Wireshark display filter usb.src == "host" and frame.len == 91
+
+// 72 Byte image data
+// Bit set equals LED off
+// 12 Bytes equals one block of 8x12 pixel
+// Byte number 41 is the first image data byte
+// Package index 3, byte index 7 = Display time
+// Package index 2, byte index 59 = Animation type
+// Package index 2, byte index 60 = Animation speed
+
+///////////////////////////////// Start package /////////////////////////////////////
+  1        2         3                                                                                         4                                                                         5   6
+|....|..............|..|..............................................................................................................................................................|.....|.|
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+// 1: 0x48 0x44 = 'HD' Magic number
+// 2: Command ?
+// 3: Package number
+// 4: Data
+// 5: Checksum All bytes 0...60
+// 6: End of package
+
+///////////////////////////////// Image package /////////////////////////////////////
+   1        2        3                                      4                                                    5                                  6                                    7   8
+|....|..............|..|...................................................................................|...........|..............................................................|.....|.|
+48 44 01 69 00 07 00 03 00 03 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 bc ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 43 aa
+// 1: 0x48 0x44 = 'HD' Magic number
+// 2: Command ?
+// 3: Package number
+// 4: ?
+// 5: ?
+// 6: Image data 72 Bytes (continued in next package)
+// 7: Checksum ?
+// 8: End of package
+
+// Display test (all default settings)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+48 44 01 69 00 07 00 03 00 03 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 bc ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 43 aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (display time = 8)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+48 44 01 69 00 07 00 03 00 08 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 5c ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 16 e8 aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (blinking)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+48 44 01 69 00 07 00 03 00 03 01 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 e4 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 6c aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (effect move up)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 01 05 01 d4 aa
+48 44 01 69 00 07 00 03 00 03 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 dc ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 63 aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (effect move up speed 9)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 01 09 01 d8 aa
+48 44 01 69 00 07 00 03 00 03 00 00 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 54 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 16 db aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (simple border)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+48 44 01 69 00 07 00 03 00 03 00 02 05 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 9c ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 25 aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
+
+//Display test (simple border speed 9)
+48 44 00 01 00 01 00 01 03 30 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 c2 aa
+48 44 01 69 00 07 00 01 00 01 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 cf 01 00 00 01 d0 aa
+48 44 01 69 00 07 00 02 00 00 64 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 6b 00 05 01 d3 aa
+48 44 01 69 00 07 00 03 00 03 00 02 09 00 00 01 00 00 00 1e 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4d 00 30 cc ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff fe fe fc fe fe fe 17 59 aa
+48 44 01 69 00 07 00 04 00 fe fe fe ff ff ff ff ff 63 dd dd c1 df dd 63 ff ff ff ff ff c6 bb bf c7 fb bb c7 ff ff ff 7f 7f 3f 7f 7f 7f 7f 7f 3f ff ff ff ff ff ff ff ff ff ff ff ff 00 2b 5a aa
+48 44 01 69 00 07 00 05 00 16 00 22 00 2e 00 3a 00 46 00 52 00 5e 00 6a 00 76 00 82 00 8e ff ff 8f 77 77 77 77 77 77 8f ff ff ff ff df 9f df df df df df 8f ff ff ff ff 8f 77 77 ef df 1c 19 aa
+48 44 01 69 00 07 00 06 00 bf 7f 07 ff ff ff ff 8f 77 f7 cf f7 f7 77 8f ff ff ff ff ef cf af af 6f 87 ef e7 ff ff ff ff 07 7f 7f 0f f7 f7 77 8f ff ff ff ff 8f 6f 7f 0f 77 77 77 8f ff 26 67 aa
+48 44 01 69 00 07 00 07 00 ff ff ff 07 6f ef df df df df df ff ff ff ff 8f 77 77 8f 77 77 77 8f ff ff ff ff 8f 77 77 77 87 f7 b7 8f ff ff ff ff b7 57 4f af d7 cb ab b7 ff ff 00 00 00 25 7b aa
